@@ -5,7 +5,7 @@ import tensorflow as tf
 
 
 class Config(object):
-    RANDOM_SEED = 9874
+    RANDOM_SEED = 9487
 
     # Project
     ROOD_DIR = os.path.abspath(os.getcwd())
