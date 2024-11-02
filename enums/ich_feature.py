@@ -11,6 +11,10 @@ class ICHFeature(Enum):
     BASELINE_IMAGE_WIDTH = ('baseline/image/width', tf.int64)
     BASELINE_IMAGE_HEIGHT = ('baseline/image/height', tf.int64)
     BASELINE_IMAGE_SLICES_NUMBER = ('baseline/image/slices', tf.int64)
+    BASELINE_RESIZE_IMAGE = ('baseline/image/resize/data', tf.string)
+    BASELINE_RESIZE_IMAGE_WIDTH = ('baseline/image/resize/width', tf.int64)
+    BASELINE_RESIZE_IMAGE_HEIGHT = ('baseline/image/resize/height', tf.int64)
+    BASELINE_RESIZE_IMAGE_SLICES_NUMBER = ('baseline/image/resize/slices', tf.int64)
 
     # # Followup
     FOLLOWUP_IMAGE = ('followup/image/data', tf.string)
@@ -18,16 +22,24 @@ class ICHFeature(Enum):
     FOLLOWUP_IMAGE_WIDTH = ('followup/image/width', tf.int64)
     FOLLOWUP_IMAGE_HEIGHT = ('followup/image/height', tf.int64)
     FOLLOWUP_IMAGE_SLICES_NUMBER = ('followup/image/slices', tf.int64)
+    FOLLOWUP_RESIZE_IMAGE = ('followup/image/resize/data', tf.string)
+    FOLLOWUP_RESIZE_IMAGE_WIDTH = ('followup/image/resize/width', tf.int64)
+    FOLLOWUP_RESIZE_IMAGE_HEIGHT = ('followup/image/resize/height', tf.int64)
+    FOLLOWUP_RESIZE_IMAGE_SLICES_NUMBER = ('followup/image/resize/slices', tf.int64)
 
     # Label
     # # Baseline
     BASELINE_LABEL = ('baseline/label/data', tf.string)
     BASELINE_LABEL_FILENAME = ('baseline/label/filename', tf.string)
     BASELINE_LABEL_SLICES_NUMBER = ('baseline/label/slices', tf.int64)
+    BASELINE_RESIZE_LABEL = ('baseline/label/resize/data', tf.string)
+    BASELINE_RESIZE_LABEL_SLICES_NUMBER = ('baseline/label/resize/slices', tf.int64)
     # # Followup
     FOLLOWUP_LABEL = ('followup/label/data', tf.string)
     FOLLOWUP_LABEL_FILENAME = ('followup/label/filename', tf.string)
     FOLLOWUP_LABEL_SLICES_NUMBER = ('followup/label/slices', tf.int64)
+    FOLLOWUP_RESIZE_LABEL = ('followup/label/resize/data', tf.string)
+    FOLLOWUP_RESIZE_LABEL_SLICES_NUMBER = ('followup/label/resize/slices', tf.int64)
 
     # Slope / Intercept
     BASELINE_SLOPE = ('baseline/slope', tf.float32)
