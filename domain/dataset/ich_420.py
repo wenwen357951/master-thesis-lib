@@ -12,4 +12,10 @@ def general_feature_description():
         .append(ICHFeature.BASELINE_IMAGE_WIDTH) \
         .append(ICHFeature.BASELINE_IMAGE_HEIGHT) \
         .append(ICHFeature.BASELINE_IMAGE_SLICES_NUMBER) \
+        .append(ICHFeature.BASELINE_RESIZE_IMAGE) \
+        .append(ICHFeature.BASELINE_RESIZE_IMAGE_WIDTH) \
+        .append(ICHFeature.BASELINE_RESIZE_IMAGE_HEIGHT) \
+        .append(ICHFeature.BASELINE_RESIZE_IMAGE_SLICES_NUMBER) \
+        .append(ICHFeature.BASELINE_RESIZE_LABEL) \
+        .append(ICHFeature.BASELINE_RESIZE_LABEL_SLICES_NUMBER) \
         .build()
