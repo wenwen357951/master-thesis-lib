@@ -13,6 +13,7 @@ def get_3d_model(
         full_connection_layer: list = [512, 256],
         class_num=1,
         activation='sigmoid',
+        with_hu_adjust=False,
         dropout: float = 0.1
 ):
     backbone, preprocess_input = Classifiers.get(backbone_name)
@@ -21,31 +22,48 @@ def get_3d_model(
         weights=weights,
         include_top=False
     )
-    input_image = KL.Input(shape=input_shape + (input_channel,), name='input_0')
-    input_slope = KL.Input(shape=(1,), name='input_1')
-    input_inter = KL.Input(shape=(1,), name='input_2')
 
-    adjust_hu = WindowSetting3D(90, 45)(
-        input_image,
-        slopes=input_slope,
-        inters=input_inter
-    )
-    adjust_hu = preprocess_input(adjust_hu)
-    x = model(adjust_hu)
+    if with_hu_adjust:
+        input_image = KL.Input(
+            shape=input_shape + (input_channel,),
+            name='input_0'
+        )
+        input_slope = KL.Input(shape=(1,), name='input_1')
+        input_inter = KL.Input(shape=(1,), name='input_2')
+        adjust_hu = WindowSetting3D(90, 45)(
+            input_image,
+            slopes=input_slope,
+            inters=input_inter
+        )
+        adjust_hu = preprocess_input(adjust_hu)
+        x = model(adjust_hu)
+    else:
+        x = model.layers[-1].output
+
     x = KL.GlobalAveragePooling3D()(x)
     x = KL.Dropout(dropout)(x)
 
-    for node_num in full_connection_layer:
-        x = KL.Dense(node_num)(x)
+    for index, node_num in enumerate(full_connection_layer):
+        x = KL.Dense(
+            node_num,
+            activation='relu',
+            name=f'classification_{index}'
+        )(x)
 
-    x = KL.Dense(class_num)(x)
-    x = KL.Activation(activation)(x)
+    x = KL.Dense(class_num, activation='sigmoid', name='prediction')(x)
 
-    model = keras.Model(
-        inputs=[
-            input_image,
-            input_slope,
-            input_inter
-        ], outputs=x
-    )
-    return model
+    if with_hu_adjust:
+        model = keras.Model(
+            inputs=[
+                input_image,
+                input_slope,
+                input_inter
+            ], outputs=x
+        )
+    else:
+        model = keras.Model(
+            inputs=model.inputs,
+            outputs=x
+        )
+
+    return model, preprocess_input
