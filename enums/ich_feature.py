@@ -59,3 +59,15 @@ class ICHFeature(Enum):
     CLINICAL_GCS_MOTOR = ('clinical/gcs/motor', tf.int64)
     CLINICAL_MODIFY_RANK_SCALE = ('clinical/mrs', tf.int64)
     CLINICAL_LOCATION = ('clinical/location', tf.int64)
+
+    # Master-Thesis
+    MODEL_X_IMAGE_HEIGHT = ('model/x/image/height', tf.int64)
+    MODEL_X_IMAGE_WIDTH = ('model/x/image/width', tf.int64)
+    MODEL_X_IMAGE_DEPTH = ('model/x/image/depth', tf.int64)
+    MODEL_1_BASELINE_IMAGE = ('model/1/baseline/data', tf.string)
+    MODEL_2_1_BASELINE_IMAGE = ('model/2-1/baseline/data', tf.string)
+    MODEL_2_2_BASELINE_IMAGE = ('model/2-2/baseline/data', tf.string)
+    MODEL_3_1_BASELINE_IMAGE = ('model/3-1/baseline/data', tf.string)
+    MODEL_3_2_BASELINE_IMAGE = ('model/3-2/baseline/data', tf.string)
+    MODEL_4_BASELINE_IMAGE = ('model/4/baseline/data', tf.string)
+    MODEL_5_BASELINE_IMAGE = ('model/5/baseline/data', tf.string)
