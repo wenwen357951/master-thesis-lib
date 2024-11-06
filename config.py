@@ -26,8 +26,14 @@ class Config(object):
     # Training
     BATCH_SIZE = 16
     EPOCH = 100
-    MODEL_NAME = "general_model_1"
+    INPUT_SHAPE = (512, 512, 28)
+    INPUT_CHANNEL = 3
+    BACKBONE = 'resnet18'
+    MODEL_NAME = "MODEL_NAME"
     INCLUDE_CLINICAL_DATA = False
+    MODEL_FCL = [256]
+    _MODEL_NAME = f"{MODEL_NAME}_{BACKBONE}"
+    MODEL_OUTPUT_DIR = os.path.join(LOGS_DIR, _MODEL_NAME)
 
     # Tensorflow
     TF_AUTOTUNE = tf.data.AUTOTUNE
@@ -41,14 +47,24 @@ class Config(object):
     )
 
     def __init__(self):
+        # Init
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
         os.makedirs(self.RESOURCE_DIR, exist_ok=True)
 
         self.DATASET_IMAGES_DIR = os.path.join(self.DATASET_DIR, 'Images')
         self.DATASET_LABELS_DIR = os.path.join(self.DATASET_DIR, 'Labels')
         self.DATASET_TFRECORD_DIR = os.path.join(self.DATASET_DIR, 'TFRecord')
-
+        self._MODEL_NAME = f"{self.MODEL_NAME}_{self.BACKBONE}"
+        self.MODEL_OUTPUT_DIR = os.path.join(
+            self.LOGS_DIR,
+            self._MODEL_NAME
+        )
+        print(f'Setting Random Seed: {self.RANDOM_SEED}')
         keras.utils.set_random_seed(self.RANDOM_SEED)
+
+        # Display Information
+        print(f"Model Name: {self.MODEL_NAME}")
+        print(f"Backbone: {self.MODEL_NAME}")
 
 
 if __name__ == '__main__':

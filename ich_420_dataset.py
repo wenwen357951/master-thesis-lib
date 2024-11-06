@@ -29,7 +29,8 @@ class ICH420Dataset(object):
         self._csv_filepath = config.DATASET_CSV
         self._dataset_dir = config.DATASET_DIR
         # Init
-        self._dataset_df = pd.read_csv(self._csv_filepath, encoding='utf-8', header=0, names=self.CSV_HEADER)
+        self._dataset_df = pd.read_csv(
+            self._csv_filepath, encoding='utf-8', header=0, names=self.CSV_HEADER)
         self._image_dir = os.path.join(self._dataset_dir, 'Images')
         self._label_dir = os.path.join(self._dataset_dir, 'Labels')
 
@@ -42,10 +43,14 @@ class ICH420Dataset(object):
 
     def _convert_object(self, item):
         case_name = str(item[0])
-        baseline_image_filepath = os.path.join(self._config.DATASET_IMAGES_DIR, str(item[1]))
-        followup_image_filepath = os.path.join(self._config.DATASET_IMAGES_DIR, str(item[2]))
-        baseline_label_filepath = os.path.join(self._config.DATASET_LABELS_DIR, str(item[3]))
-        followup_label_filepath = os.path.join(self._config.DATASET_LABELS_DIR, str(item[4]))
+        baseline_image_filepath = os.path.join(
+            self._config.DATASET_IMAGES_DIR, str(item[1]))
+        followup_image_filepath = os.path.join(
+            self._config.DATASET_IMAGES_DIR, str(item[2]))
+        baseline_label_filepath = os.path.join(
+            self._config.DATASET_LABELS_DIR, str(item[3]))
+        followup_label_filepath = os.path.join(
+            self._config.DATASET_LABELS_DIR, str(item[4]))
 
         if not self._include_clinical:
             return HECase(
@@ -117,16 +122,16 @@ class ICH420Dataset(object):
             yield self._convert_object(item)
 
     def load_tfrecord(self, dataset_name: str, set_name, feature_description: dict):
-        tfrecord_files = sorted(
-            glob2.glob(
-                os.path.join(
-                    self._config.DATASET_TFRECORD_DIR,
-                    set_name,
-                    f'{dataset_name}_*_{set_name}_*.tfrecord'
-                )
-            )
+        tfrecord_pattern = os.path.join(
+            self._config.DATASET_TFRECORD_DIR,
+            set_name,
+            f'{dataset_name}_*_{set_name}_*.tfrecord'
         )
-
+        print(f"TFRecord File Pattern: {tfrecord_pattern}")
+        tfrecord_files = sorted(
+            glob2.glob(tfrecord_pattern)
+        )
+        print(f"TFrecord Files: {tfrecord_files}")
         tfdataset = tf.data.TFRecordDataset(
             filenames=tfrecord_files,
             compression_type=self._config.TFRECORD_OPTIONS.compression_type,

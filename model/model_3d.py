@@ -12,7 +12,6 @@ def get_3d_model(
         input_channel: int = 1,
         full_connection_layer: list = [512, 256],
         class_num=1,
-        activation='sigmoid',
         with_hu_adjust=False,
         dropout: float = 0.1
 ):
@@ -38,17 +37,18 @@ def get_3d_model(
         adjust_hu = preprocess_input(adjust_hu)
         x = model(adjust_hu)
     else:
-        x = model.layers[-1].output
+        input_image = KL.Input(
+            shape=input_shape + (3,),
+            name='input_0'
+        )
+        x = preprocess_input(input_image)
+        x = model(x)
 
     x = KL.GlobalAveragePooling3D()(x)
     x = KL.Dropout(dropout)(x)
 
     for index, node_num in enumerate(full_connection_layer):
-        x = KL.Dense(
-            node_num,
-            activation='relu',
-            name=f'classification_{index}'
-        )(x)
+        x = KL.Dense(node_num, activation='leaky_relu', name=f'classification_{index}')(x)
 
     x = KL.Dense(class_num, activation='sigmoid', name='prediction')(x)
 
@@ -62,8 +62,8 @@ def get_3d_model(
         )
     else:
         model = keras.Model(
-            inputs=model.inputs,
+            inputs=input_image,
             outputs=x
         )
 
-    return model, preprocess_input
+    return model
