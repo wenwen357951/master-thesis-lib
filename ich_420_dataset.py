@@ -3,6 +3,7 @@ import os
 import glob2
 import pandas as pd
 import tensorflow as tf
+from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 
 from .config import Config
@@ -23,6 +24,13 @@ class ICH420Dataset(object):
         '出血位置(Location(基底核:1,丘腦:2,大腦皮質下:3,後顱窩:4))'
     ]
 
+    NORMALIZE_COLUMN = [
+        'Baseline出血體積',
+        'Follow-up出血體積',
+        '年齡',
+        'GCS分數'
+    ]
+
     def __init__(self, config: Config):
         self._config = config
         self._include_clinical = config.INCLUDE_CLINICAL_DATA
@@ -33,13 +41,34 @@ class ICH420Dataset(object):
             self._csv_filepath, encoding='utf-8', header=0, names=self.CSV_HEADER)
         self._image_dir = os.path.join(self._dataset_dir, 'Images')
         self._label_dir = os.path.join(self._dataset_dir, 'Labels')
+        self._scaler = preprocessing.StandardScaler()
+
+        if self._include_clinical:
+            self.CSV_HEADER.append('GCS分數')
 
         self._train_set, self._test_set = train_test_split(
             self.dataframe,
             test_size=config.TEST_SET_RATIO,
-            random_state=Config.RANDOM_SEED,
+            random_state=config.RANDOM_SEED,
             stratify=self.dataframe[["是否發生血塊擴大"]]
         )
+        print(
+            'Train:', len(self._train_set),
+            f'({(1-config.TEST_SET_RATIO)*100}%)',
+            '|',
+            'Test:', len(self._test_set),
+            f'({config.TEST_SET_RATIO*100}%)'
+        )
+
+        if self._include_clinical:
+            self._train_set[self.NORMALIZE_COLUMN] = self._scaler.fit_transform(
+                self._train_set[self.NORMALIZE_COLUMN]
+            )
+            self._test_set[self.NORMALIZE_COLUMN] = self._scaler.transform(
+                self._test_set[self.NORMALIZE_COLUMN]
+            )
+            print('Mean:', self._scaler.mean_)
+            print('Scale:', self._scaler.scale_)
 
     def _convert_object(self, item):
         case_name = str(item[0])
@@ -60,7 +89,7 @@ class ICH420Dataset(object):
                 baseline_label_filepath,
                 followup_label_filepath,
                 int(item[5]), int(item[7]),
-                int(item[6]), int(item[8]),
+                float(item[6]), float(item[8]),
                 float(item[9]),
                 float(item[11]),
                 bool(item[10]),
@@ -69,30 +98,61 @@ class ICH420Dataset(object):
             )
 
         return HEClinicalCase(
-            case_name,
-            baseline_image_filepath,
-            followup_image_filepath,
-            baseline_label_filepath,
-            followup_label_filepath,
-            int(item[5]), int(item[7]),
-            int(item[6]), int(item[8]),
-            float(item[9]),
-            float(item[11]),
-            bool(item[10]),
-            bool(item[12]),
-            bool(item[13]),
-            int(item[16]),
-            GlasgowComaScale(
-                item[17], item[18], item[19]
+            case_name=case_name,
+            baseline_image_filepath=baseline_image_filepath,
+            followup_image_filepath=followup_image_filepath,
+            baseline_label_filepath=baseline_label_filepath,
+            followup_label_filepath=followup_label_filepath,
+            baseline_he_pixel_number=int(
+                item[self._header_idx('Baseline出血像數量')]
             ),
-            int(item[26]),
-            HELocation(int(item[28]))
+            followup_he_pixel_number=int(
+                item[self._header_idx('Follow-up出血像數量')]
+            ),
+            baseline_he_volume=float(
+                item[self._header_idx('Baseline出血體積')]
+            ),
+            followup_he_volume=float(
+                item[self._header_idx('Follow-up出血體積')]
+            ),
+            baseline_followup_he_volume_difference=float(
+                item[self._header_idx('Baseline與Follow-up出血差值')]
+            ),
+            volume_difference_ratio=float(
+                item[self._header_idx('體積變化率')]
+            ),
+            volume_difference_greater_6cc=bool(
+                item[self._header_idx('體積變化>6cc')]
+            ),
+            volume_difference_greater_33percent=bool(
+                item[self._header_idx('體積變化>33%')]
+            ),
+            is_hematoma_expansion=bool(
+                item[self._header_idx('是否發生血塊擴大')]
+            ),
+            sex=item[self._header_idx('性別')],
+            age=item[self._header_idx('年齡')],
+            gcs=item[self._header_idx('GCS分數')],
+            hypertension=int(item[self._header_idx('高血壓(Hypertension)')]),
+            diabetes=int(item[self._header_idx('糖尿病(Diabetes Mellitus)')]),
+            uremia=int(item[self._header_idx('尿毒症(Uremia)')]),
+            smoking=int(item[self._header_idx('吸菸(Smoking)')]),
+            alcohol=int(item[self._header_idx('酒精(Alcohol)')]),
+            dyslipidemia=int(item[self._header_idx('血脂異常(Dyslipidemia)')]),
+            he_location=int(item[
+                self._header_idx('出血位置(Location(基底核:1,丘腦:2,大腦皮質下:3,後顱窩:4))')
+            ])
         )
 
     @property
     def dataframe(self):
         if self._config.INCLUDE_CLINICAL_DATA:
-            return self._dataset_df.dropna()
+            df = self._dataset_df \
+                .dropna() \
+                .reset_index(drop=True)
+            df['GCS分數'] = df['GCS:E'] + df['GCS:M'] + df['GCS:V(E->1)']
+            df['性別'] = preprocessing.LabelEncoder().fit_transform(df['性別'])
+            return df
 
         return self._dataset_df
 
@@ -143,3 +203,10 @@ class ICH420Dataset(object):
             return tf.io.parse_example(example, feature_description)
 
         return tfdataset.map(_decode_fn, num_parallel_calls=self._config.TF_AUTOTUNE)
+
+    @property
+    def standard_scaler(self):
+        return self._scaler
+
+    def _header_idx(self, name):
+        return self.CSV_HEADER.index(name)

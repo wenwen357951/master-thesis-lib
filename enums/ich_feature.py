@@ -14,7 +14,8 @@ class ICHFeature(Enum):
     BASELINE_RESIZE_IMAGE = ('baseline/image/resize/data', tf.string)
     BASELINE_RESIZE_IMAGE_WIDTH = ('baseline/image/resize/width', tf.int64)
     BASELINE_RESIZE_IMAGE_HEIGHT = ('baseline/image/resize/height', tf.int64)
-    BASELINE_RESIZE_IMAGE_SLICES_NUMBER = ('baseline/image/resize/slices', tf.int64)
+    BASELINE_RESIZE_IMAGE_SLICES_NUMBER = (
+        'baseline/image/resize/slices', tf.int64)
 
     # # Followup
     FOLLOWUP_IMAGE = ('followup/image/data', tf.string)
@@ -25,7 +26,8 @@ class ICHFeature(Enum):
     FOLLOWUP_RESIZE_IMAGE = ('followup/image/resize/data', tf.string)
     FOLLOWUP_RESIZE_IMAGE_WIDTH = ('followup/image/resize/width', tf.int64)
     FOLLOWUP_RESIZE_IMAGE_HEIGHT = ('followup/image/resize/height', tf.int64)
-    FOLLOWUP_RESIZE_IMAGE_SLICES_NUMBER = ('followup/image/resize/slices', tf.int64)
+    FOLLOWUP_RESIZE_IMAGE_SLICES_NUMBER = (
+        'followup/image/resize/slices', tf.int64)
 
     # Label
     # # Baseline
@@ -33,13 +35,15 @@ class ICHFeature(Enum):
     BASELINE_LABEL_FILENAME = ('baseline/label/filename', tf.string)
     BASELINE_LABEL_SLICES_NUMBER = ('baseline/label/slices', tf.int64)
     BASELINE_RESIZE_LABEL = ('baseline/label/resize/data', tf.string)
-    BASELINE_RESIZE_LABEL_SLICES_NUMBER = ('baseline/label/resize/slices', tf.int64)
+    BASELINE_RESIZE_LABEL_SLICES_NUMBER = (
+        'baseline/label/resize/slices', tf.int64)
     # # Followup
     FOLLOWUP_LABEL = ('followup/label/data', tf.string)
     FOLLOWUP_LABEL_FILENAME = ('followup/label/filename', tf.string)
     FOLLOWUP_LABEL_SLICES_NUMBER = ('followup/label/slices', tf.int64)
     FOLLOWUP_RESIZE_LABEL = ('followup/label/resize/data', tf.string)
-    FOLLOWUP_RESIZE_LABEL_SLICES_NUMBER = ('followup/label/resize/slices', tf.int64)
+    FOLLOWUP_RESIZE_LABEL_SLICES_NUMBER = (
+        'followup/label/resize/slices', tf.int64)
 
     # Slope / Intercept
     BASELINE_SLOPE = ('baseline/slope', tf.float32)
@@ -53,11 +57,23 @@ class ICHFeature(Enum):
     # Clinical Data
     CLINICAL_BASELINE_VOLUME = ('clinical/baseline/volume', tf.float32)
     CLINICAL_FOLLOWUP_VOLUME = ('clinical/followup/volume', tf.float32)
-    CLINICAL_AGE = ('clinical/age', tf.int64)
+    CLINICAL_SEX = ('clinical/sex', tf.int64)
+    CLINICAL_AGE = ('clinical/age', tf.float32)
+    # # GCS
+    CLINICAL_GCS = ('clinical/gcs', tf.float32)
     CLINICAL_GCS_EYE = ('clinical/gcs/eye', tf.int64)
     CLINICAL_GCS_VERBAL = ('clinical/gcs/verbal', tf.int64)
     CLINICAL_GCS_MOTOR = ('clinical/gcs/motor', tf.int64)
+    # #
+    CLINICAL_HYPERTENSION = ('clinical/hypertension', tf.int64)
+    CLINICAL_DIABETES = ('clinical/diabetes', tf.int64)
+    CLINICAL_UREMIA = ('clinical/uremia', tf.int64)
+    CLINICAL_SMOKING = ('clinical/smoking', tf.int64)
+    CLINICAL_ALCOHOL = ('clinical/alcohol', tf.int64)
+    CLINICAL_DYSLIPIDEMIA = ('clinical/dyslipidemia', tf.int64)
+    # # mRS_
     CLINICAL_MODIFY_RANK_SCALE = ('clinical/mrs', tf.int64)
+    # # Location
     CLINICAL_LOCATION = ('clinical/location', tf.int64)
 
     # Master-Thesis
