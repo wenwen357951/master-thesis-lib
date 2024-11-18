@@ -1,3 +1,5 @@
+import json
+
 from .ich_case import ICHCase
 
 
@@ -64,3 +66,18 @@ class HECase(ICHCase):
     @property
     def is_hematoma_expansion(self):
         return self._is_hematoma_expansion
+
+    def __str__(self) -> str:
+        return json.dumps(
+            json.loads(super().__str__()) | {
+                "baseline_he_pixel_number": self._baseline_he_pixel_number,
+                "followup_he_pixel_number": self._followup_he_pixel_number,
+                "baseline_he_volume": self._baseline_he_volume,
+                "followup_he_volume": self._followup_he_volume,
+                "baseline_followup_he_volume_difference": self._baseline_followup_he_volume_difference,
+                "volume_difference_ratio": self._volume_difference_ratio,
+                "volume_difference_greater_6cc": self._volume_difference_greater_6cc,
+                "volume_difference_greater_33percent": self._volume_difference_greater_33percent,
+                "is_hematoma_expansion": self._is_hematoma_expansion,
+            }
+        )

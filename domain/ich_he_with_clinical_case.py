@@ -1,3 +1,5 @@
+import json
+
 from .ich_he_case import HECase
 from .glasgow_coma_scale import GlasgowComaScale
 from ..enums import HELocation
@@ -99,3 +101,19 @@ class HEClinicalCase(HECase):
     @property
     def he_location(self) -> int:
         return self._he_location
+
+    def __str__(self) -> str:
+        return json.dumps(
+            json.loads(super().__str__()) | {
+                "sex": self._sex,
+                "age": self._age,
+                "gcs": self._gcs,
+                "hypertension": self._hypertension,
+                "diabetes": self._diabetes,
+                "uremia": self._uremia,
+                "smoking": self._smoking,
+                "alcohol": self._alcohol,
+                "dyslipidemia": self._dyslipidemia,
+                "he_location": self._he_location
+            }
+        )

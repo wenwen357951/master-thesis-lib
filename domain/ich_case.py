@@ -1,4 +1,7 @@
+import json
+
 from .nifti import NIFTIImage
+
 
 class ICHCase(object):
     def __init__(
@@ -43,3 +46,14 @@ class ICHCase(object):
 
     def followup_label(self):
         return NIFTIImage(self._followup_label_filepath)
+
+    def __str__(self) -> str:
+        return json.dumps(
+            {
+                'case_name': self._case_name,
+                'baseline_image_filepath': self._baseline_image_filepath,
+                'baseline_label_filepath': self._baseline_label_filepath,
+                'followup_image_filepath': self._followup_image_filepath,
+                'followup_label_filepath': self._followup_label_filepath
+            }
+        )

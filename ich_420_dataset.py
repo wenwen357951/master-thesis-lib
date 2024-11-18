@@ -121,18 +121,18 @@ class ICH420Dataset(object):
             volume_difference_ratio=float(
                 item[self._header_idx('體積變化率')]
             ),
-            volume_difference_greater_6cc=bool(
+            volume_difference_greater_6cc=int(
                 item[self._header_idx('體積變化>6cc')]
             ),
-            volume_difference_greater_33percent=bool(
+            volume_difference_greater_33percent=int(
                 item[self._header_idx('體積變化>33%')]
             ),
-            is_hematoma_expansion=bool(
+            is_hematoma_expansion=int(
                 item[self._header_idx('是否發生血塊擴大')]
             ),
-            sex=item[self._header_idx('性別')],
-            age=item[self._header_idx('年齡')],
-            gcs=item[self._header_idx('GCS分數')],
+            sex=int(item[self._header_idx('性別')]),
+            age=float(item[self._header_idx('年齡')]),
+            gcs=float(item[self._header_idx('GCS分數')]),
             hypertension=int(item[self._header_idx('高血壓(Hypertension)')]),
             diabetes=int(item[self._header_idx('糖尿病(Diabetes Mellitus)')]),
             uremia=int(item[self._header_idx('尿毒症(Uremia)')]),
@@ -144,33 +144,31 @@ class ICH420Dataset(object):
             ])
         )
 
-    @property
+    @ property
     def dataframe(self):
         if self._config.INCLUDE_CLINICAL_DATA:
-            df = self._dataset_df \
-                .dropna() \
-                .reset_index(drop=True)
+            df = self._dataset_df.dropna().reset_index(drop=True)
             df['GCS分數'] = df['GCS:E'] + df['GCS:M'] + df['GCS:V(E->1)']
             df['性別'] = preprocessing.LabelEncoder().fit_transform(df['性別'])
             return df
 
         return self._dataset_df
 
-    @property
+    @ property
     def train_set_generator(self):
         for item in self._train_set.to_numpy():
             yield self._convert_object(item)
 
-    @property
+    @ property
     def train_set_len(self):
         return len(self._train_set)
 
-    @property
+    @ property
     def test_set_generator(self):
         for item in self._test_set.to_numpy():
             yield self._convert_object(item)
 
-    @property
+    @ property
     def test_set_len(self):
         return len(self._test_set)
 
@@ -204,7 +202,7 @@ class ICH420Dataset(object):
 
         return tfdataset.map(_decode_fn, num_parallel_calls=self._config.TF_AUTOTUNE)
 
-    @property
+    @ property
     def standard_scaler(self):
         return self._scaler
 
