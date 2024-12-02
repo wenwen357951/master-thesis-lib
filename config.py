@@ -27,11 +27,12 @@ class Config(object):
     BATCH_SIZE = 16
     EPOCH = 100
     INPUT_SHAPE = (512, 512, 28)
-    INPUT_CHANNEL = 3
+    INPUT_CHANNEL = 1
     BACKBONE = 'resnet18'
     MODEL_NAME = "MODEL_NAME"
     INCLUDE_CLINICAL_DATA = False
     MODEL_FCL = [256]
+    DROPOUT = 0.3
     _MODEL_NAME = f"{MODEL_NAME}_{BACKBONE}"
     MODEL_OUTPUT_DIR = os.path.join(LOGS_DIR, _MODEL_NAME)
 
